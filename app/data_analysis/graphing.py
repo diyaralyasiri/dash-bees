@@ -8,6 +8,8 @@ from app.data_analysis.SQL_helper_functions import DatabaseManager
 import timeit
 import sqlite3
 import re
+from sqlalchemy import create_engine
+engine = create_engine('postgres://qeirlxsntkwbkn:4a53f53c6fd6d1b91f30a520a97e821364ca2c71b94c67711d2e5aaaced2c6dc@ec2-54-247-79-178.eu-west-1.compute.amazonaws.com:5432/ddqb75j223tb8c')
 
 
 from bokeh.server.server import Server
@@ -23,10 +25,10 @@ def parse_input_time(input):
     return datetime
 
 def get_data():
-    conn = sqlite3.connect("app/data_analysis/Bee_Telemetry_Database.db")
-    df_telemetry = pd.read_sql_query("SELECT Timestamp, Temperature, Wieght, Humidity FROM Telemetry_Data_Table ORDER BY id DESC LIMIT 100", conn,
-                                     parse_dates=['Timestamp'])
-    conn.close()
+    # conn = sqlite3.connect("app/data_analysis/Bee_Telemetry_Database.db")
+    df_telemetry = pd.read_sql_query('SELECT timestamp, temperature, weight, humidity FROM telemetry_data_table ORDER BY id DESC LIMIT 100', con=engine,
+                                     parse_dates=['timestamp'])
+    # conn.close()
 
     return df_telemetry
 
@@ -52,17 +54,17 @@ def plotgraphs(data_source):
                                                    milliseconds=["%M:%Ss"],
                                                    seconds=["%m/%d %H:%M:%Ss"])
 
-    t_plot.line('Timestamp', 'Temperature', source=data_source, line_width=2, color='#66CCCC')
+    t_plot.line('timestamp', 'temperature', source=data_source, line_width=2, color='#66CCCC')
 
     t_plot.add_tools(HoverTool(
         tooltips=[
-            ('Temperature', '@Temperature °C'),
-            ('Timestamp', '@Timestamp{%Y/%m/%d %H:%M:%Ss}'),
+            ('Temperature', '@temperature °C'),
+            ('Timestamp', '@timestamp{%Y/%m/%d %H:%M:%Ss}'),
         ],
 
         formatters={
-            '@Temperature': 'numeral',
-            '@Timestamp': 'datetime',
+            '@temperature': 'numeral',
+            '@timestamp': 'datetime',
         },
         mode='vline'
     ))
@@ -85,17 +87,17 @@ def plotgraphs(data_source):
                                                    milliseconds=["%M:%Ss"],
                                                    seconds=["%m/%d %H:%M:%Ss"])
 
-    h_plot.line('Timestamp', 'Humidity', source=data_source, line_width=2, color='#66CCCC')
+    h_plot.line('timestamp', 'humidity', source=data_source, line_width=2, color='#66CCCC')
 
     h_plot.add_tools(HoverTool(
         tooltips=[
-            ('Humidity', '@Humidity %'),
-            ('Timestamp', '@Timestamp{%Y/%m/%d %H:%M:%Ss}'),
+            ('Humidity', '@humidity %'),
+            ('Timestamp', '@timestamp{%Y/%m/%d %H:%M:%Ss}'),
         ],
 
         formatters={
-            '@Humidity': 'numeral',
-            '@Timestamp': 'datetime',
+            '@humidity': 'numeral',
+            '@timestamp': 'datetime',
         },
         mode='vline'
     ))
@@ -117,17 +119,17 @@ def plotgraphs(data_source):
                                                    milliseconds=["%M:%Ss"],
                                                    seconds=["%m/%d %H:%M:%Ss"])
 
-    w_plot.line('Timestamp', 'Wieght', source=data_source, line_width=2, color='#66CCCC')
+    w_plot.line('timestamp', 'weight', source=data_source, line_width=2, color='#66CCCC')
 
     w_plot.add_tools(HoverTool(
         tooltips=[
-            ('Wieght', '@Wieght Kg'),
-            ('Timestamp', '@Timestamp{%Y/%m/%d %H:%M:%Ss}'),
+            ('Wieght', '@weight Kg'),
+            ('Timestamp', '@timestamp{%Y/%m/%d %H:%M:%Ss}'),
         ],
 
         formatters={
-            '@Wieght': 'numeral',
-            '@Timestamp': 'datetime',
+            '@weight': 'numeral',
+            '@timestamp': 'datetime',
         },
         mode='vline'
     ))
@@ -141,21 +143,22 @@ def plotgraphs(data_source):
 def get_data_filtered(t1, t2):
     """Function to get time filtered data from SQL database to pandas dataframe"""
 
-    conn = sqlite3.connect("app/data_analysis/Bee_Telemetry_Database.db")
+    # conn = sqlite3.connect("app/data_analysis/Bee_Telemetry_Database.db")
 
     df_telemetry = pd.read_sql_query(
-        "SELECT Timestamp, Temperature, Wieght, Humidity FROM Telemetry_Data_Table where Timestamp >= (?)  and Timestamp <= (?) ",
-        conn, params=(t1, t2),
-        parse_dates=['Timestamp'],
+        "SELECT timestamp, temperature, weight, humidity FROM telemetry_data_table where Timestamp >= %s  and Timestamp <= %s ",
+        con=engine, params=[t1, t2],
+        parse_dates=['Timestamp']
         )
 
-    conn.close()
+    # conn.close()
 
     return df_telemetry
 
 def filtered_graphs(t1,t2):
     
     data = get_data_filtered(t1,t2)
+    # data = get_data()
     data_source = ColumnDataSource(data)
     t_plot, h_plot, w_plot = plotgraphs(data_source)
 
