@@ -1,0 +1,40 @@
+{% extends "public_template.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block main %}
+
+<div class="container">
+      <h1>Filtered View</h1>
+      <hr>
+      <div>
+      {{ script|safe }}
+      {{ div1|safe }}
+      {{ div2|safe }}
+      {{ div3|safe }}
+    </div>
+    <hr>
+    <h1>Filter</h1>
+    <hr>
+    <div style="width: max-content; margin:0 auto;">
+    <row>
+      <form action="/filtered/" method="POST">
+    <label for="meeting-time">Choose start time:</label>
+    <input type="datetime-local" id="start-time"
+       name="start-time" required>
+       <label for="meeting-time">Choose an end time:</label>
+    <input type="datetime-local" id="end-time"
+       name="end-time" required>
+       <span class="validity"></span>
+        <button  type="submit" class="btn btn-outline-primary" value="Filter">Filter</button>
+      </form>
+    </div>
+    </row>
+    <br/>
+    <br/>
+    <div style="width: max-content; margin:0 auto;">
+      <button type="button" class="btn btn-outline-success" onClick="location.href='../dashboard'"> Real Time View</button>
+    </div>
+</div>
+
+{% endblock %}

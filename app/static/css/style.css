@@ -1,0 +1,29 @@
+body {
+    background-color: white;
+}
+
+/* div {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+} */
+
+centeredbox {
+  width: max-content; 
+  margin:0 auto;
+}
+
+label {
+  display: inline-block;
+  width: 300px;
+}
+
+input:invalid+span:after {
+  content: '✖';
+  padding-left: 5px;
+}
+
+input:valid+span:after {
+  content: '✓';
+  padding-left: 5px;
+}
