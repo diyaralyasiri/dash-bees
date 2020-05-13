@@ -17,7 +17,7 @@ def index():
 
 @app.route("/dashboard/")
 def graph():
-    script = server_document("https://bokeh-bee.herokuapp.com")
+    script = server_document("https://bokeh-bee.herokuapp.com/graphing")
     # script = server_document("https://diyartest.herokuapp.com:5006/bees")
     return render_template("dashboard.html", script=script, template="Flask")
 
