@@ -78,7 +78,7 @@ def handle_mqtt_message(client, userdata, message):
             teams_functions.post_message_markdown("The Bee Hive temperature is now above 15 °C", r['id'], bot.token)
 
     
-    # Store_Alchemy(data)
+    Store_Alchemy(data)
 
 
 from app.views import views
