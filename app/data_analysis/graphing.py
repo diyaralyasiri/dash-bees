@@ -148,7 +148,7 @@ def get_data_filtered(t1, t2):
     df_telemetry = pd.read_sql_query(
         "SELECT timestamp, temperature, weight, humidity FROM telemetry_data_table where Timestamp >= %s  and Timestamp <= %s ",
         con=engine, params=[t1, t2],
-        parse_dates=['Timestamp']
+        parse_dates=['timestamp']
         )
 
     # conn.close()
