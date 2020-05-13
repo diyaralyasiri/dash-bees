@@ -4,7 +4,14 @@ from app.data_analysis.SQL_helper_functions import Store_Telemetry_Data
 import json
 import app.webex.webhook_functions as functions
 from flask_sqlalchemy import SQLAlchemy
+from app.webex.variables import webex_bot as bot
+import app.webex.teams_functions as teams_functions
+from sqlalchemy import create_engine
+engine = create_engine('postgres://qeirlxsntkwbkn:4a53f53c6fd6d1b91f30a520a97e821364ca2c71b94c67711d2e5aaaced2c6dc@ec2-54-247-79-178.eu-west-1.compute.amazonaws.com:5432/ddqb75j223tb8c')
 
+
+# buffer1=0
+# buffer2=0
 
 app = Flask(__name__)
 app.config['MQTT_BROKER_URL'] = 'mqtt.eclipse.org'
@@ -14,6 +21,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://qeirlxsntkwbkn:4a53f53c6fd6d
 mqtt = Mqtt(app)
 
 db = SQLAlchemy(app)
+
+
 
 class telemetry_data_table(db.Model):
     id= db.Column(db.Integer, primary_key=True)
@@ -55,20 +64,21 @@ def handle_mqtt_message(client, userdata, message):
     # print ("MQTT Data Received...")
     # print ("MQTT Topic: " + topic)
     # print ("Data: " + str(data))
-
-    # if buffer 1 != null {
-    #   buffer 2= data.temperature     
-    # }
-
-    # if buffer 2 > 15c && buffer 1 < 15c {
-    #  unsert webhook here posts to all rooms
-    # }
-
-    # buffer 1 = data.temperagature
    
-    #  data.temperate  
+    temp1 = list(engine.execute("SELECT temperature FROM telemetry_data_table ORDER BY id DESC LIMIT 7"))[0][0]
+    temp2 = list(engine.execute("SELECT temperature FROM telemetry_data_table ORDER BY id DESC LIMIT 7"))[6][0]
 
-    Store_Alchemy(data)
+    print("t1:" + str(temp1))
+    print("t2:" + str(temp2))
+
+    if temp1 > 26 and temp2 < 26:
+        rooms = teams_functions.list_rooms(bot.token)
+        data = rooms.json()['items']
+        for r in data:
+            teams_functions.post_message_markdown("The Bee Hive temperature is now above 15 °C", r['id'], bot.token)
+
+    
+    # Store_Alchemy(data)
 
 
 from app.views import views

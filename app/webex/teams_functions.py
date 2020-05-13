@@ -2,8 +2,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import app.webex.bot_capabilities as bot_capabilities
-
 import json
+
 
 
 def create_room(room_name, token):
@@ -150,7 +150,7 @@ def cleanup_room(room_id, token):
 
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-    messages = json.loads(list_messages(room_id, my_token))
+    messages = json.loads(list_messages(room_id, token))
 
     headers = {'Authorization': 'Bearer ' + token,
                'Content-Type': 'application/json'}

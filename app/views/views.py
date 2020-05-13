@@ -51,15 +51,15 @@ def new_message():
 
     # I would like to show the operational data of my interfaces
     if message == "CaptainBuzz How's the weather?":
-        dbObj = DatabaseManager()
-        Latest_temp = str(list(engine.execute("SELECT temperature FROM telemetry_data_table ORDER BY id DESC LIMIT 1")[0][0]))
-        Latest_hum = str(list(engine.execute("SELECT humidity FROM telemetry_data_table ORDER BY id DESC LIMIT 1")[0][0]))
-        Latest_w = str(list(engine.execute("SELECT weight FROM telemetry_data_table ORDER BY id DESC LIMIT 1")[0][0]))
-        TimeStamp = str(list(engine.execute("SELECT timestamp FROM telemetry_Data_Table ORDER BY id DESC LIMIT 1")[0][0]))
+        # dbObj = DatabaseManager()
+        Latest_temp = str(list(engine.execute("SELECT temperature FROM telemetry_data_table ORDER BY id DESC LIMIT 1"))[0][0])
+        Latest_hum = str(list(engine.execute("SELECT humidity FROM telemetry_data_table ORDER BY id DESC LIMIT 1"))[0][0])
+        Latest_w = str(list(engine.execute("SELECT weight FROM telemetry_data_table ORDER BY id DESC LIMIT 1"))[0][0])
+        TimeStamp = str(list(engine.execute("SELECT timestamp FROM telemetry_Data_Table ORDER BY id DESC LIMIT 1"))[0][0])
         print("Temperature= " + Latest_temp + ' °C Humidity= ' + Latest_hum + ' % Weight= ' + Latest_w +' % Time Stamp: ' + TimeStamp[:20])
         teams_functions.post_message_markdown((
                 "I was hoping you'd ask me that! The current conditions in the hive are:<br/>Temp= " + Latest_temp + ' °C<br/>Humidity= ' + Latest_hum + ' °%<br/>Weight= ' + Latest_w +' Kg<br/>Time Stamp: ' + TimeStamp[:20]), room_id, bot.token)
-        del dbObj
+        # del dbObj
     else:
         teams_functions.post_help_bot(room_id, bot.token)
     return "message sent"
